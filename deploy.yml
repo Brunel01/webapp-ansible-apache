@@ -1,0 +1,26 @@
+---
+- name: Déploiement d'Apache à l'aide de Docker
+  hosts: prod
+  become: true
+  pre_tasks:
+    - name: Install EPEL repo
+      package:
+        name: epel-release
+        state: present
+      when: ansible_distribution == "CentOS"
+    - name: Install python-pip
+      yum:
+        name: python-pip
+        state: present
+        update_cache: yes
+    - name: Install docker python
+      pip:
+        name: docker-py
+  tasks:
+    - name: Création du conteneur Apache
+      docker_container:
+        name: webapp
+        image: httpd
+        ports:
+          - "80:80"
+
